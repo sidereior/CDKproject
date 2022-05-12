@@ -1,7 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.sound.sampled.*;
 import org.openscience.cdk.CDKConstants;
@@ -18,9 +20,9 @@ public class World
   private boolean started = false;
   private static ArrayList<File> soundtrack = new ArrayList<File>();
 
-  public static void run()
+  public void run()
   {
-    Display display = new Display(500, 500, "CN1C=NC2=C1C(=O)N(C(=O)N2C)C");
+    Display display = new Display(500, 500, elementToDisplay);
     display.run();
   }
 
@@ -28,23 +30,55 @@ public class World
   private int width;
   private int height;
   private String title;
-  private String visualizeElement;
-
+  private String elementToDisplay;
   public World(int w, int h, String name, String element)
   {
     title=name;
     width = w;
     height = h;
     sprites = new ArrayList<Sprite>();
-    visualizeElement=element;
+    elementToDisplay=element;
+
   }
-  
+  //(double theLeft, double theTop, int theWidth, int theHeight, String element
+
   public void stepAll()
   {
     for (int i = 0; i < sprites.size(); i++)
     {
       Sprite s = sprites.get(i);
+      if(sprites.get(i).getType()=="VisualizeElement")
+      {
+        try {
+          generatePng(elementToDisplay);
+          sprites.add(new VisualizeElement(0,0,400,400,elementToDisplay + ".png"));
+        }
+        catch(Exception e)
+        {
+          throw new RuntimeException("The element you entered, " + elementToDisplay + "was not valid. Your structure is likely wrong.");
+        }
+
+      }
       s.step(this);
+    }
+  }
+
+  public void generatePng(String visElement) throws Exception
+  {
+    try {
+      IChemObjectBuilder bldr = SilentChemObjectBuilder.getInstance();
+      SmilesParser smipar = new SmilesParser(bldr);
+      IAtomContainer mol = smipar.parseSmiles(elementToDisplay);
+      mol.setProperty(CDKConstants.TITLE, elementToDisplay);
+      DepictionGenerator dptgen = new DepictionGenerator();
+      dptgen.withSize(200, 250).withMolTitle().withTitleColor(Color.DARK_GRAY);
+      BufferedImage visual = dptgen.depict(mol).toImg();
+      File outputfile = new File(elementToDisplay + ".png");
+      ImageIO.write(visual, "png", outputfile);
+    }
+    catch(Exception e)
+    {
+      throw new RuntimeException("Invalid Depiction of Element " + elementToDisplay + ", try altering strucutre because structure is not supported");
     }
   }
 

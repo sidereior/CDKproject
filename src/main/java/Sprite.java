@@ -95,7 +95,12 @@ public class Sprite
       return true;
     return false;
   }
-  
+
+  public String getType()
+  {
+    return "Sprite";
+  }
+
   public void step(World world)
   {
     //do NOT insert any code here

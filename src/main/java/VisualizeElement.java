@@ -12,7 +12,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesParser;
 import javax.swing.*;
 
-public class VisualizeElement
+public class VisualizeElement extends Sprite
 {
     private double left;  //the x-coordinate of the left edge of the sprite
     private double top;   //the y-coordinate of the top edge of the sprite
@@ -20,13 +20,14 @@ public class VisualizeElement
     private int height;
     private String elementToDisplay;
 
-    public VisualizeElement(double theLeft, double theTop, int theWidth, int theHeight, String element)
+    public VisualizeElement(double theLeft, double theTop, int theWidth, int theHeight, String image)
     {
+        super(theLeft, theTop, theWidth, theHeight,image);
         left = theLeft;
         top = theTop;
         width = theWidth;
         height = theHeight;
-        elementToDisplay=element;
+        elementToDisplay=image;
     }
 
     public double getLeft()
@@ -69,23 +70,15 @@ public class VisualizeElement
         height = h;
     }
 
-    public Image getImage() throws Exception
+    public void setImage(String i)
     {
-        try {
-            IChemObjectBuilder bldr = SilentChemObjectBuilder.getInstance();
-            SmilesParser smipar = new SmilesParser(bldr);
-            IAtomContainer mol = smipar.parseSmiles("CN1C=NC2=C1C(=O)N(C(=O)N2C)C");
-            mol.setProperty(CDKConstants.TITLE, "caffeine");
-            DepictionGenerator dptgen = new DepictionGenerator();
-            dptgen.withSize(200, 250).withMolTitle().withTitleColor(Color.DARK_GRAY);
-            BufferedImage visual = dptgen.depict(mol).toImg();
-            return visual;
-        }
-        catch(Exception e)
-        {
-            throw new RuntimeException("Invalid Depiction of Element " + elementToDisplay + ", try altering strucutre because structure is not supported");
-        }
+        elementToDisplay=i;
     }
+    public String setImage()
+    {
+        return elementToDisplay;
+    }
+
 
     public void setElementToDisplay(String i)
     {
@@ -115,6 +108,11 @@ public class VisualizeElement
         if(x > getLeft() && x < getLeft() + getWidth() && y < getTop() + getHeight() && y > getTop())
             return true;
         return false;
+    }
+
+    public String getType()
+    {
+        return "VisualizeElement";
     }
 
     public void step(World world)
