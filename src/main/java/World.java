@@ -13,6 +13,7 @@ import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesParser;
 import javax.swing.*;
+import java.util.Scanner;
 
 public class World
 {
@@ -20,9 +21,20 @@ public class World
   private boolean started = false;
   private static ArrayList<File> soundtrack = new ArrayList<File>();
 
-  public void run()
+
+  public static void main(String[] args)
   {
-    Display display = new Display(500, 500, elementToDisplay);
+    run();
+  }
+
+
+  public static void run()
+  {
+    Scanner reader = new Scanner(System.in);
+    System.out.println("Enter an element: ");
+    String n = reader.next(); // Scans the next token of the input as an int.
+    reader.close();
+    Display display = new Display(500, 500, n);
     display.run();
   }
 
@@ -47,11 +59,15 @@ public class World
     for (int i = 0; i < sprites.size(); i++)
     {
       Sprite s = sprites.get(i);
+      //TODO: NEED TO DO THIS SOME OTHER WAY, STEP ALL IS NOT THE WAY TO GO!
+      //TODO: maybe within run this can be fixed??
       if(sprites.get(i).getType()=="VisualizeElement")
       {
         try {
+          System.out.println("running step all");
           generatePng(elementToDisplay);
           sprites.add(new VisualizeElement(0,0,400,400,elementToDisplay + ".png"));
+          System.out.println("Size of sprites: " + sprites.size());
         }
         catch(Exception e)
         {
