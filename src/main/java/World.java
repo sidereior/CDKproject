@@ -1,100 +1,58 @@
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
-import java.io.File;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.sound.sampled.*;
-import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.depict.DepictionGenerator;
-import org.openscience.cdk.interfaces.*;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.smiles.SmilesParser;
-import javax.swing.*;
-import java.util.Scanner;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 
 public class World
 {
   private boolean paused = false;
   private boolean started = false;
-  private static ArrayList<File> soundtrack = new ArrayList<File>();
-
+  private String elementName = "NULL";
 
   public static void main(String[] args)
   {
     run();
   }
 
-
   public static void run()
   {
-    Scanner reader = new Scanner(System.in);
-    System.out.println("Enter an element: ");
-    String n = reader.next(); // Scans the next token of the input as an int.
-    reader.close();
-    Display display = new Display(500, 500, n);
+    Display display = new Display(700, 600);
     display.run();
+
   }
+
+
 
   private ArrayList<Sprite> sprites;
   private int width;
   private int height;
-  private String title;
-  private String elementToDisplay;
-  public World(int w, int h, String name, String element)
+
+  public World(int w, int h)
   {
-    title=name;
     width = w;
     height = h;
     sprites = new ArrayList<Sprite>();
-    elementToDisplay=element;
 
+   //add sprites here?
   }
-  //(double theLeft, double theTop, int theWidth, int theHeight, String element
 
   public void stepAll()
   {
     for (int i = 0; i < sprites.size(); i++)
     {
       Sprite s = sprites.get(i);
-      //TODO: NEED TO DO THIS SOME OTHER WAY, STEP ALL IS NOT THE WAY TO GO!
-      //TODO: maybe within run this can be fixed??
-      if(sprites.get(i).getType()=="VisualizeElement")
-      {
-        try {
-          System.out.println("running step all");
-          generatePng(elementToDisplay);
-          sprites.add(new VisualizeElement(0,0,400,400,elementToDisplay + ".png"));
-          System.out.println("Size of sprites: " + sprites.size());
-        }
-        catch(Exception e)
-        {
-          throw new RuntimeException("The element you entered, " + elementToDisplay + "was not valid. Your structure is likely wrong.");
-        }
-
-      }
+      System.out.println(elementName);
       s.step(this);
-    }
-  }
-
-  public void generatePng(String visElement) throws Exception
-  {
-    try {
-      IChemObjectBuilder bldr = SilentChemObjectBuilder.getInstance();
-      SmilesParser smipar = new SmilesParser(bldr);
-      IAtomContainer mol = smipar.parseSmiles(elementToDisplay);
-      mol.setProperty(CDKConstants.TITLE, elementToDisplay);
-      DepictionGenerator dptgen = new DepictionGenerator();
-      dptgen.withSize(200, 250).withMolTitle().withTitleColor(Color.DARK_GRAY);
-      BufferedImage visual = dptgen.depict(mol).toImg();
-      File outputfile = new File(elementToDisplay + ".png");
-      ImageIO.write(visual, "png", outputfile);
-    }
-    catch(Exception e)
-    {
-      throw new RuntimeException("Invalid Depiction of Element " + elementToDisplay + ", try altering strucutre because structure is not supported");
     }
   }
 
@@ -102,65 +60,47 @@ public class World
   {
     return width;
   }
-  
+
   public int getHeight()
   {
     return height;
   }
-  
+
   public int getNumSprites()
   {
     return sprites.size();
   }
-  
+
   public Sprite getSprite(int index)
   {
     return sprites.get(index);
   }
-  
+
   public void mouseClicked(int x, int y)
   {
-   /* if(pause.isClicked(x,y))
+    if(225<=x && x<=437 && y<=555 && y>=530)
     {
-      if(!paused)
-      {
-        vex = ball.getVX();
-        vey = ball.getVY();
-        ball.setVX(0);
-        ball.setVY(0);
-        paused = true;
-        pause.setImage("resume.png");
-      }
-      else
-      {
-        ball.setVX(vex);
-        ball.setVY(vey);
-        paused = false;
-        pause.setImage("pause.png");
-      }
+      createWindow();
     }
-    */
 
-    
   }
-  
+
   public void keyPressed(int key)
   {
 
-
   }
-  
+
   public void keyReleased(int key)
   {
 
   }
-  
+
   public String getTitle()
   {
-    return title;
+    return "Chemistry Visualization";
   }
-  
-  public void paintComponent(Graphics g) throws Exception
+
+  public void paintComponent(Graphics g)
   {
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, width, height);
@@ -168,11 +108,62 @@ public class World
     {
       Sprite sprite = sprites.get(i);
       g.drawImage(Display.getImage(sprite.getImage()),
-                  (int)sprite.getLeft(), (int)sprite.getTop(),
-                  sprite.getWidth(), sprite.getHeight(), null);
+              (int)sprite.getLeft(), (int)sprite.getTop(),
+              sprite.getWidth(), sprite.getHeight(), null);
     }
-    g.setColor(Color.WHITE);
-
 
   }
+
+  public void createWindow() {
+    JFrame frame = new JFrame("Enter an element");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    ret=createUI(frame);
+    frame.setSize(560, 200);
+    frame.setLocationRelativeTo(null);
+    frame.setVisible(true);
+    System.out.println(elementName);
+    System.out.println("ret:" + ret);
+  }
+  public String ret="";
+  public String  createUI(final JFrame frame){
+
+    JPanel panel = new JPanel();
+    LayoutManager layout = new FlowLayout();
+    panel.setLayout(layout);
+    JButton button = new JButton("Click to enter an element");
+    final JLabel label = new JLabel();
+    button.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        String theVal="";
+        String result = (String)JOptionPane.showInputDialog(
+                frame,
+                "Type your element",
+                "Enter an element",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                null
+        );
+        if(result != null && result.length() > 0){
+          label.setText("You entered:" + result);
+          theVal =result;
+          System.out.println("theVal " + theVal);
+
+        }else {
+          label.setText("None enetered:");
+          theVal ="NULL";
+          System.out.println("nulltheVal " + theVal);
+        }
+
+      }
+    });
+    System.out.println("ret: " + ret);
+    panel.add(button);
+    panel.add(label);
+    frame.getContentPane().add(panel, BorderLayout.CENTER);
+    return ret;
+  }
+
+
 }
