@@ -18,7 +18,7 @@ public class Visualization {
     public static void main(String[] args) throws Exception {
         IChemObjectBuilder bldr = SilentChemObjectBuilder.getInstance();
         SmilesParser smipar = new SmilesParser(bldr);
-        IAtomContainer mol = smipar.parseSmiles("C#N");
+        IAtomContainer mol = smipar.parseSmiles("[C-]#N");
         mol.setProperty(CDKConstants.TITLE, "C#C#C#C#N=N=N");
         DepictionGenerator dptgen = new DepictionGenerator();
         dptgen.withSize(200, 250).withMolTitle().withTitleColor(Color.DARK_GRAY);

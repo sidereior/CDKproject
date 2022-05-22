@@ -18,6 +18,7 @@ public class World
   private boolean paused = false;
   private boolean started = false;
   private String elementName = "NULL";
+  //public String prevResult;
 
   public static void main(String[] args)
   {
@@ -48,10 +49,15 @@ public class World
 
   public void stepAll()
   {
+    if(result!=null && !result.equals("NULL"))
+    {
+      //double theLeft, double theTop, int theWidth, int theHeight, String image
+      sprites.add(new VisualizeElement(10,10,400,400,result));
+    }
     for (int i = 0; i < sprites.size(); i++)
     {
       Sprite s = sprites.get(i);
-      System.out.println(elementName);
+      //System.out.println(elementName);
       s.step(this);
     }
   }
@@ -59,6 +65,10 @@ public class World
   public int getWidth()
   {
     return width;
+  }
+
+  public String getResult(){
+    return result;
   }
 
   public int getHeight()
@@ -113,19 +123,19 @@ public class World
     }
 
   }
-
+  public String result;
   public void createWindow() {
     JFrame frame = new JFrame("Enter an element");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    ret=createUI(frame);
+    createUI(frame);
     frame.setSize(560, 200);
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
-    System.out.println(elementName);
-    System.out.println("ret:" + ret);
+    //System.out.println(elementName);
+    //System.out.println("ret:" + result);
   }
-  public String ret="";
-  public String  createUI(final JFrame frame){
+
+  public void createUI(final JFrame frame){
 
     JPanel panel = new JPanel();
     LayoutManager layout = new FlowLayout();
@@ -136,7 +146,7 @@ public class World
       @Override
       public void actionPerformed(ActionEvent e) {
         String theVal="";
-        String result = (String)JOptionPane.showInputDialog(
+        result = (String)JOptionPane.showInputDialog(
                 frame,
                 "Type your element",
                 "Enter an element",
@@ -147,22 +157,20 @@ public class World
         );
         if(result != null && result.length() > 0){
           label.setText("You entered:" + result);
-          theVal =result;
-          System.out.println("theVal " + theVal);
-
+          //System.out.println("result the: " + result);
+          //System.out.println("theVal " + theVal);
         }else {
           label.setText("None enetered:");
           theVal ="NULL";
-          System.out.println("nulltheVal " + theVal);
+          //System.out.println("nulltheVal " + theVal);
         }
 
       }
     });
-    System.out.println("ret: " + ret);
+    //System.out.println("result: " + result);
     panel.add(button);
     panel.add(label);
     frame.getContentPane().add(panel, BorderLayout.CENTER);
-    return ret;
   }
 
 

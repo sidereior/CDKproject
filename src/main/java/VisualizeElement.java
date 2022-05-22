@@ -12,6 +12,16 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesParser;
 import javax.swing.*;
 
+import java.io.*;
+import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.lang.StringBuilder;
+
 public class VisualizeElement extends Sprite
 {
     private double left;  //the x-coordinate of the left edge of the sprite
@@ -19,6 +29,7 @@ public class VisualizeElement extends Sprite
     private int width;
     private int height;
     private String elementToDisplay;
+    private String image;
 
     public VisualizeElement(double theLeft, double theTop, int theWidth, int theHeight, String image)
     {
@@ -70,13 +81,10 @@ public class VisualizeElement extends Sprite
         height = h;
     }
 
-    public void setImage(String i)
+    public void setImage()
     {
-        elementToDisplay=i;
-    }
-    public String setImage()
-    {
-        return elementToDisplay;
+        image="";
+
     }
 
 
@@ -117,6 +125,51 @@ public class VisualizeElement extends Sprite
 
     public void step(World world)
     {
+        this.setImage();
         //do NOT insert any code here
+    }
+
+    public static String getData(String quote, String target) throws IOException {
+        // formatting target is awlays cpatial first leet of words
+        URL url = new URL("https://finviz.com/quote.ashx?t=" + quote);
+        URLConnection urlConn = url.openConnection();
+        InputStreamReader inStream = new InputStreamReader(urlConn.getInputStream());
+        BufferedReader buff = new BufferedReader(inStream);
+        String line = buff.readLine();
+        String result = "didn't work";
+        while (line != null) {
+            if (line.contains("SMILES")) {
+                result = line;
+                break;
+            }
+            line = buff.readLine();
+        }
+        inStream.close();
+        buff.close();
+        // System.out.println(result);
+        return result;
+        // System.out.println("work");
+
+    }
+
+    public static String solveString(String result) {
+        String value = "didn't work";
+        String last = "no work";
+        if (result.contains("</small></b></td>")) {
+            value = result.substring(0, result.indexOf("</small></b></td>"));
+            last = value;
+            for (int i = value.length() - 1; i >= 0; i--) {
+                if ((Character.toString(value.charAt(i))).equals(">")) {
+                    last = value.substring(i + 1, value.length());
+                    break;
+                }
+            }
+            // System.out.println(last);
+
+        }
+        // do it here:
+        // System.out.println(last);
+
+         return null;
     }
 }
