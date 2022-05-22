@@ -89,7 +89,7 @@ public class World
     else if(result!=null && !result.equals("NULL") && !wait && updated)
     {
       try {
-
+        //TODO: USING CDK TO DRAW FROM SMILES
        // System.out.println("result: " + result);
         //System.out.println("getData: " + getData());
         smiles = solveString(getData());
@@ -121,7 +121,7 @@ public class World
   }
 
   public String getData() throws IOException {
-    // formatting target is awlays cpatial first leet of words
+    //TODO: USING WIKIPEDIA TO GET THE CHEMICAL STRUCUTRE
     URL url = new URL("https://en.wikipedia.org/wiki/" + result);
     URLConnection urlConn = url.openConnection();
     InputStreamReader inStream = new InputStreamReader(urlConn.getInputStream());
@@ -142,7 +142,7 @@ public class World
     // System.out.println("work");
 
   }
-
+  //TODO: USING WIKIPEDIA TO GET THE CHEMICAL STRUCUTRE
   public static String solveString(String result) {
     String value = "didn't work";
     String last = "no work";
@@ -227,6 +227,8 @@ public class World
     }
 
   }
+
+  //TODO: CREATING THE DISPLAY
   public String result;
   public void createWindow() {
     JFrame frame = new JFrame("Enter an element");
