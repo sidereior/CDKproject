@@ -11,35 +11,20 @@ import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.awt.*;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.*;
-import java.util.*;
 import javax.imageio.*;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.depict.DepictionGenerator;
+import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.*;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesParser;
-import javax.swing.*;
 
-import java.io.*;
-import java.util.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.lang.StringBuilder;
 
+import java.awt.Color;
 
 public class World
 {
@@ -48,6 +33,9 @@ public class World
   private String elementName = "NULL";
   public String imageName="";
   public String smiles="";
+  boolean wait=false;
+  boolean updated=false;
+  boolean graphUpdate=false;
 
   public static void main(String[] args)
   {
@@ -81,22 +69,33 @@ public class World
     if(result!=null && !result.equals("NULL"))
     {
       try {
-        System.out.println("result: " + result);
-        System.out.println("getData: " + getData());
+       // System.out.println("result: " + result);
+        //System.out.println("getData: " + getData());
         smiles = solveString(getData());
-        System.out.println("smiles: " + smiles);
+        IChemObjectBuilder bldr = SilentChemObjectBuilder.getInstance();
+        SmilesParser smipar = new SmilesParser(bldr);
+        IAtomContainer mol = smipar.parseSmiles(smiles);
+        mol.setProperty(CDKConstants.TITLE, result);
+        DepictionGenerator dptgen = new DepictionGenerator();
+        dptgen.withSize(200, 250).withMolTitle().withTitleColor(Color.DARK_GRAY);
+        BufferedImage visual = dptgen.depict(mol).toImg();
+        File outputfile = new File("C:\\Users\\alexa\\IdeaProjects\\CDKChemFinalLab\\src\\main\\resources\\" + result + ".png");
+        ImageIO.write(visual, "png", outputfile);
+        imageName= result + ".png";
+        wait=true;
+        updated=false;
+        //System.out.println("smiles: " + smiles);
       }
-      catch (IOException e){
+      catch (IOException | CDKException e){
         throw new RuntimeException("Given compound does not exist, you entered: " + result);
       }
       //double theLeft, double theTop, int theWidth, int theHeight, String image
-      //sprites.add(new Sprite(10,10,400,400,imageName));
+
     }
-    for (int i = 0; i < sprites.size(); i++)
-    {
-      Sprite s = sprites.get(i);
-      //System.out.println(elementName);
-      s.step(this);
+    if(graphUpdate) {
+      sprites.clear();
+      sprites.add(new Sprite(10, 10, 400, 400, imageName));
+      graphUpdate=false;
     }
   }
 
@@ -136,7 +135,7 @@ public class World
           break;
         }
       }
-      System.out.println("last" + last);
+      //System.out.println("last" + last);
 
     }
     // do it here:
@@ -229,8 +228,7 @@ public class World
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        String theVal="";
-        result = (String)JOptionPane.showInputDialog(
+        String theVal= (String)JOptionPane.showInputDialog(
                 frame,
                 "Type your element",
                 "Enter an element",
@@ -239,6 +237,16 @@ public class World
                 null,
                 null
         );
+        if(result==null || !result.equals(theVal))
+        {
+          updated=true;
+          result=theVal;
+        }
+        else
+        {
+          updated=false;
+          //result=theVal;
+        }
         if(result != null && result.length() > 0){
           label.setText("You entered:" + result);
           //System.out.println("result the: " + result);
@@ -252,9 +260,23 @@ public class World
       }
     });
     //System.out.println("result: " + result);
+    JButton graph = new JButton("Click to graph element");
+    graph.addActionListener(new ActionListener() {
+      @Override
+
+      public void actionPerformed(ActionEvent e) {
+        if(e.getActionCommand().equals("Click to graph element")){
+          graphUpdate=true;
+        }
+
+      }
+    });
+    //System.out.println("result: " + result);
     panel.add(button);
+    panel.add(graph);
     panel.add(label);
     frame.getContentPane().add(panel, BorderLayout.CENTER);
+
   }
 
 
