@@ -36,6 +36,8 @@ public class World
   boolean wait=false;
   boolean updated=false;
   boolean graphUpdate=false;
+  private int numSteps=0;
+  public BufferedImage visual;
 
   public static void main(String[] args)
   {
@@ -44,7 +46,7 @@ public class World
 
   public static void run()
   {
-    Display display = new Display(700, 600);
+    Display display = new Display(600, 600);
     display.run();
 
   }
@@ -66,9 +68,28 @@ public class World
 
   public void stepAll()
   {
-    if(result!=null && !result.equals("NULL"))
+    numSteps++;
+    //System.out.println(numSteps);
+    if(graphUpdate) {
+      //System.out.println("is here: " + numSteps);
+      sprites.clear();
+      try {
+       // System.out.println("tried again: " + numSteps);
+        sprites.add(new Sprite(10, 10, 500, 500, visual));
+
+        graphUpdate = false;
+        wait = false;
+        return;
+      }
+      catch (RuntimeException e)
+      {
+        return;
+      }
+    }
+    else if(result!=null && !result.equals("NULL") && !wait && updated)
     {
       try {
+
        // System.out.println("result: " + result);
         //System.out.println("getData: " + getData());
         smiles = solveString(getData());
@@ -78,25 +99,25 @@ public class World
         mol.setProperty(CDKConstants.TITLE, result);
         DepictionGenerator dptgen = new DepictionGenerator();
         dptgen.withSize(200, 250).withMolTitle().withTitleColor(Color.DARK_GRAY);
-        BufferedImage visual = dptgen.depict(mol).toImg();
-        File outputfile = new File("C:\\Users\\alexa\\IdeaProjects\\CDKChemFinalLab\\src\\main\\resources\\" + result + ".png");
-        ImageIO.write(visual, "png", outputfile);
-        imageName= result + ".png";
+        visual = dptgen.depict(mol).toImg();
+        //File outputfile = new File("C:\\Users\\alexa\\IdeaProjects\\CDKChemFinalLab\\src\\main\\resources\\" + result + ".png");
+        //ImageIO.write(visual, "png", outputfile);
+        //imageName= result + ".png";
         wait=true;
         updated=false;
+        //System.out.println("is in try: " + numSteps);
+        return;
         //System.out.println("smiles: " + smiles);
       }
       catch (IOException | CDKException e){
         throw new RuntimeException("Given compound does not exist, you entered: " + result);
       }
+
+
       //double theLeft, double theTop, int theWidth, int theHeight, String image
 
     }
-    if(graphUpdate) {
-      sprites.clear();
-      sprites.add(new Sprite(10, 10, 400, 400, imageName));
-      graphUpdate=false;
-    }
+
   }
 
   public String getData() throws IOException {
@@ -139,7 +160,7 @@ public class World
 
     }
     // do it here:
-    // System.out.println(last);
+    //System.out.println(last);
 
     return last;
   }
@@ -240,6 +261,11 @@ public class World
         if(result==null || !result.equals(theVal))
         {
           updated=true;
+          if(theVal.contains(" "))
+          {
+            theVal=theVal.replaceAll(" ", "_");
+            theVal=theVal.toLowerCase();
+          }
           result=theVal;
         }
         else

@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -10,15 +11,15 @@ public class Sprite
   private double top;   //the y-coordinate of the top edge of the sprite
   private int width;
   private int height;
-  private String image;
+  private BufferedImage image;
   
-  public Sprite(double theLeft, double theTop, int theWidth, int theHeight, String theImage)
+  public Sprite(double theLeft, double theTop, int theWidth, int theHeight, BufferedImage theImage)
   {
     left = theLeft;
     top = theTop;
     width = theWidth;
     height = theHeight;
-    setImage(theImage);
+    image=theImage;
   }
   
   public double getLeft()
@@ -61,12 +62,12 @@ public class Sprite
     height = h;
   }
   
-  public String getImage()
+  public Image getImage()
   {
     return image;
   }
   
-  public void setImage(String i)
+  public void setImage(BufferedImage i)
   {
     image = i;
   }

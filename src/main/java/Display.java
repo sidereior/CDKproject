@@ -11,25 +11,25 @@ public class Display extends JComponent implements KeyListener, MouseListener
 {
   private static Map<String, Image> images = new HashMap<String, Image>();
   private boolean createdWindow=false;
-  public static Image getImage(String name)
+  public static Image getImage(Image name)
   {
-    try
-    {
-      Image image = images.get(name);
-      if (image == null)
-      {
-        URL url = Display.class.getResource(name);
-        if (url == null)
-          throw new RuntimeException("unable to load image:  " + name);
-        image = ImageIO.read(url);
-        images.put(name, image);
-      }
-      return image;
-    }
-    catch (IOException e)
-    {
-      throw new RuntimeException(e);
-    }
+    //try
+    //{
+     // Image image = images.get(name);
+     // if (image == null)
+      //{
+      //  URL url = Display.class.getResource(name);
+     //   if (url == null)
+      //    throw new RuntimeException("unable to load image:  " + name);
+      //  image = ImageIO.read(url);
+     //   images.put(name, image);
+    //  }
+      return name;
+   // }
+   // catch (IOException e)
+  // {
+   //   throw new RuntimeException(e);
+   // }
   }
 
   private JFrame frame;
