@@ -11,25 +11,10 @@ public class Display extends JComponent implements KeyListener, MouseListener
 {
   private static Map<String, Image> images = new HashMap<String, Image>();
   private boolean createdWindow=false;
+  //Creates a map that stores a name and the images
   public static Image getImage(Image name)
   {
-    //try
-    //{
-     // Image image = images.get(name);
-     // if (image == null)
-      //{
-      //  URL url = Display.class.getResource(name);
-     //   if (url == null)
-      //    throw new RuntimeException("unable to load image:  " + name);
-      //  image = ImageIO.read(url);
-     //   images.put(name, image);
-    //  }
       return name;
-   // }
-   // catch (IOException e)
-  // {
-   //   throw new RuntimeException(e);
-   // }
   }
 
   private JFrame frame;
@@ -40,6 +25,7 @@ public class Display extends JComponent implements KeyListener, MouseListener
 
   public Display(final int width, final int height)
   {
+    //Makes a new frame and displays it
     keys = new ConcurrentLinkedQueue<KeyEvent>();
     mouseX = -1;
     mouseY = -1;
@@ -47,8 +33,7 @@ public class Display extends JComponent implements KeyListener, MouseListener
     try
     {
       SwingUtilities.invokeAndWait(new Runnable() { public void run() {
-        world = new World(width, height);
-
+         world = new World(width, height);
         frame = new JFrame();
         frame.setTitle("World");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -112,7 +97,6 @@ public class Display extends JComponent implements KeyListener, MouseListener
 
   public void keyTyped(KeyEvent e)
   {
-    //ignored
   }
 
   public void mousePressed(MouseEvent e)

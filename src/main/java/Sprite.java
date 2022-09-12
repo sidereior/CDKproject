@@ -15,6 +15,7 @@ public class Sprite
   
   public Sprite(double theLeft, double theTop, int theWidth, int theHeight, BufferedImage theImage)
   {
+    //Sprite or image which a location and a Buffered Image
     left = theLeft;
     top = theTop;
     width = theWidth;
@@ -74,6 +75,7 @@ public class Sprite
   
   public boolean overlap(Sprite other)
   {
+    //checks if two sprites overlap
     if(this.getLeft() < other.getLeft() + other.getWidth())
     {
       if(this.getLeft() + this.getWidth() > other.getLeft())
@@ -92,6 +94,7 @@ public class Sprite
   
   public boolean isClicked(int x, int y)
   {
+    //checks if the sprite is clicked
     if(x > getLeft() && x < getLeft() + getWidth() && y < getTop() + getHeight() && y > getTop())
       return true;
     return false;
@@ -104,6 +107,5 @@ public class Sprite
 
   public void step(World world)
   {
-    //do NOT insert any code here
   }
 }

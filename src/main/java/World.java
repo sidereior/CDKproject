@@ -46,9 +46,10 @@ public class World
 
   public static void run()
   {
+    //Creates a new display of specified size
     Display display = new Display(600, 600);
     display.run();
-
+    //run the display
   }
 
 
@@ -62,21 +63,17 @@ public class World
     width = w;
     height = h;
     sprites = new ArrayList<Sprite>();
-
-   //add sprites here?
   }
 
   public void stepAll()
   {
+    //tick's the entire world to render a frame
     numSteps++;
-    //System.out.println(numSteps);
     if(graphUpdate) {
-      //System.out.println("is here: " + numSteps);
       sprites.clear();
       try {
-       // System.out.println("tried again: " + numSteps);
+        //Adds a new sprite (image) to the world of specified size visual
         sprites.add(new Sprite(10, 10, 500, 500, visual));
-
         graphUpdate = false;
         wait = false;
         return;
@@ -89,39 +86,30 @@ public class World
     else if(result!=null && !result.equals("NULL") && !wait && updated)
     {
       try {
-        //TODO: USING CDK TO DRAW FROM SMILES
-       // System.out.println("result: " + result);
-        //System.out.println("getData: " + getData());
+        //If the result is not null, then the image is updated
         smiles = solveString(getData());
         IChemObjectBuilder bldr = SilentChemObjectBuilder.getInstance();
+        //Uses CDK to parse the SMILES string
         SmilesParser smipar = new SmilesParser(bldr);
         IAtomContainer mol = smipar.parseSmiles(smiles);
         mol.setProperty(CDKConstants.TITLE, result);
         DepictionGenerator dptgen = new DepictionGenerator();
         dptgen.withSize(200, 250).withMolTitle().withTitleColor(Color.DARK_GRAY);
         visual = dptgen.depict(mol).toImg();
-        //File outputfile = new File("C:\\Users\\alexa\\IdeaProjects\\CDKChemFinalLab\\src\\main\\resources\\" + result + ".png");
-        //ImageIO.write(visual, "png", outputfile);
-        //imageName= result + ".png";
+        //Converts image to buffered image
         wait=true;
         updated=false;
-        //System.out.println("is in try: " + numSteps);
         return;
-        //System.out.println("smiles: " + smiles);
       }
       catch (IOException | CDKException e){
         throw new RuntimeException("Given compound does not exist, you entered: " + result);
+        //If the compound does not exist, then an error is thrown
       }
-
-
-      //double theLeft, double theTop, int theWidth, int theHeight, String image
-
     }
-
   }
 
+  //Scrapes wikipedia for the SMILES string of the compound
   public String getData() throws IOException {
-    //TODO: USING WIKIPEDIA TO GET THE CHEMICAL STRUCUTRE
     URL url = new URL("https://en.wikipedia.org/wiki/" + result);
     URLConnection urlConn = url.openConnection();
     InputStreamReader inStream = new InputStreamReader(urlConn.getInputStream());
@@ -130,25 +118,26 @@ public class World
     String b = "didn't work";
     while (line != null) {
       if (line.contains("SMILES")) {
-        b = buff.readLine();//it is always the next line that the SMILES representation is on
+        b = buff.readLine();
         break;
+        //If the line contains SMILES, then the next line is the SMILES string
       }
       line = buff.readLine();
     }
     inStream.close();
     buff.close();
-    // System.out.println(result);
+    //Returns the SMILES string
     return b;
-    // System.out.println("work");
-
   }
-  //TODO: USING WIKIPEDIA TO GET THE CHEMICAL STRUCUTRE
+
+  //solves the string to get the SMILES string
   public static String solveString(String result) {
+    //Takes in HTML string to convert to SMILES string
     String value = "didn't work";
     String last = "no work";
     if (result.contains("<ul class=\"mw-collapsible-content\" style=\"font-size: 105%; margin-top: 0; margin-bottom: 0; line-height: inherit; text-align: left; list-style: none none; margin-left: 0; word-break:break-all;\"><li style=\"line-height: inherit; margin: 0\"><div style=\"border-top:1px solid #ccc; padding:0.2em 0 0.2em 1.6em; word-wrap:break-word; text-indent:-1.5em; text-align:left; font-size:97%; line-height:120%;\">")) {
       value = result.substring(399);
-      //result.indexOf("text-indent:-1.5em; text-align:left; font-size:97%; line-height:120%;\">")
+      //Splits up the string into the SMILES string
       last = value;
       for (int i = 0; i<value.length(); i++) {
         if ((Character.toString(value.charAt(i))).equals("<")) {
@@ -156,16 +145,13 @@ public class World
           break;
         }
       }
-      //System.out.println("last" + last);
-
     }
-    // do it here:
-    //System.out.println(last);
-
+    //Returns the SMILES string
     return last;
   }
 
 
+  //Sets and gets properties of the World
   public int getWidth()
   {
     return width;
@@ -228,8 +214,9 @@ public class World
 
   }
 
-  //TODO: CREATING THE DISPLAY
   public String result;
+  
+  //Creates a new window to input the compound
   public void createWindow() {
     JFrame frame = new JFrame("Enter an element");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -237,12 +224,10 @@ public class World
     frame.setSize(560, 200);
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
-    //System.out.println(elementName);
-    //System.out.println("ret:" + result);
   }
 
   public void createUI(final JFrame frame){
-
+    //Creates a new panel to add the text field and button
     JPanel panel = new JPanel();
     LayoutManager layout = new FlowLayout();
     panel.setLayout(layout);
@@ -273,21 +258,19 @@ public class World
         else
         {
           updated=false;
-          //result=theVal;
         }
         if(result != null && result.length() > 0){
           label.setText("You entered:" + result);
-          //System.out.println("result the: " + result);
-          //System.out.println("theVal " + theVal);
+          //Sees the text that you entered
         }else {
           label.setText("None enetered:");
           theVal ="NULL";
-          //System.out.println("nulltheVal " + theVal);
+          //Nothing is entered
         }
 
       }
     });
-    //System.out.println("result: " + result);
+    //Creates a new button to click to graph the element
     JButton graph = new JButton("Click to graph element");
     graph.addActionListener(new ActionListener() {
       @Override
@@ -299,13 +282,10 @@ public class World
 
       }
     });
-    //System.out.println("result: " + result);
+    //Adds the button and text field to the panel
     panel.add(button);
     panel.add(graph);
     panel.add(label);
     frame.getContentPane().add(panel, BorderLayout.CENTER);
-
   }
-
-
 }
